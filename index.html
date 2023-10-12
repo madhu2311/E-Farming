@@ -1,0 +1,782 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+</html>
+
+
+
+
+<?php session_start();
+// echo "<pre>";
+// print_r($_SESSION);
+//if(!isset($_SESSION['isLoggedIn'])){
+//	header("location:login.php");
+//}
+
+
+
+
+include_once "header.php";
+
+
+?>
+
+
+<style type="text/css"> html,
+body { height: 100%;
+}
+
+
+body {
+background-image: url(efarming.jpg); background-repeat: no-repeat; background-size: 100% 100%;
+}
+</style>
+ 
+
+
+
+
+<h1> E FARMING </h1>
+
+
+<p><?php if(isset($_SESSION['isLoggedIn'])){
+echo "WELCOME" .str_repeat('&nbsp;', 5).$_SESSION['userDetails']['name'];
+}?></p>
+
+
+</body>
+</html>
+ 
+
+
+<!-- User Login Page Coding -->
+
+
+
+
+<?php session_start();
+if(isset($_SESSION['isLoggedIn'])){ header("location:index.php?alreadyLogin=1");
+}
+include_once "header.php"; ?>
+
+
+<div class="container-fluid">
+<div class="row ques_form">
+<div class="col-md-4"></div>
+<div class="col-md-4">
+<form action="loginCheck.php" method="POST">
+<div class="signup">
+<div class="form-group">
+<label for="username">Username</label>
+<input type="text" id="username" name="username" placeholder="allowed value a-zA-Z0-9 without space" class="form-control" required="">
+</div>
+<div class="form-group">
+<label for="password">Password</label>
+<input type="password" id="password" placeholder="must be strong" name="password" class="form-control" required="">
+</div>
+<div class="form-group">
+ 
+
+
+<button type="submit" class="btnbtn-success">Login</button>
+</div>
+<?php
+
+if(isset($_GET['err'])){
+echo "<div class='alert alert-danger'>Wrong username and password</div>";
+`
+}
+?>
+</div>
+</form>
+</div>
+ 
+
+
+<!-- Login check Coding -->
+
+
+<?php session_start();
+include_once 'user_cls.php';
+$userObj = new user_cls();
+$userDetails = $userObj->is_user_exists($_POST['username'],$_POST['password']);
+
+
+
+
+if(empty($userDetails)){
+header("location:http://localhost/qus_ans_forum/login.php?err=1");
+
+ 
+}else{
+ 
+
+
+$_SESSION['isLoggedIn']= 1;
+$_SESSION['userDetails'] = $userDetails; header('location:index.php?logsucc=1');
+ 
+
+
+}
+ 
+
+
+<!-- Log Out Page Coding -->
+
+
+
+
+
+
+
+<?php session_start(); session_destroy();
+header("location:login.php?logout_succ=1");
+ 
+
+
+My Account Page Coding
+
+
+<?php session_start();
+if(!isset($_SESSION['isLoggedIn'])){ header("location:login.php");
+}
+include_once "header.php";
+?>
+<div class="container-fluid">
+<h1>My Account page welcome <?php echo $_SESSION[‘userDetails’][‘name’]; ?></h1>
+ 
+
+
+<!-- Save User page Coding -->
+<?php
+
+include_once 'user_cls.php';
+
+$userObj = new user_cls();
+
+
+if($userObj->is_username_exists($_POST['username'])==0){ if($userObj->insert($_POST)){
+header('location:user_reg.php?err=0');
+
+ 
+
+
+
+
+
+}else{
+ 
+}else{
+
+
+}
+ 
+
+
+header('location:user_reg.php?err=1');
+ 
+
+header('location:user_reg.php?err=2');
+
+}
+ 
+
+
+<!-- Show Goods Page Coding -->
+
+
+<?php session_start();
+// echo "<pre>";
+
+// print_r($_SESSION); if(!isset($_SESSION['isLoggedIn'])){
+header("location:login.php");
+
+}
+
+
+include_once "goods_cls.php";
+
+$goods_obj = new goods_cls(); if (isset($_GET['keyword'])) {
+$latest = $goods_obj->getGoodsByKeyword($_GET['keyword']);
+
+} else {
+
+$latest = $goods_obj->getGoodsByKeyword();
+
+}
+
+
+
+
+
+
+include_once "header.php";
+
+?>
+
+<div class="container-fluid">
+
+<h1> Welcome <?php echo $_SESSION['userDetails']['name']; ?></h1>
+ 
+
+
+<div class="row stu_form">
+
+<div class="col-md-2"></div>
+
+<div class="col-md-8">
+
+<form action="show_goods.php">
+
+<div class="input-group">
+
+<input type="text" class="form-control" name="keyword" placeholder="Search for...">
+
+<span class="input-group-btn">
+
+<button class="btnbtn-default" type="submit">
+
+<span class="glyphiconglyphicon-search"></span>
+
+</button>
+
+</span>
+
+
+
+ 
+</div>
+
+<?php
+ 
+
+
+
+if (count($latest) == 0) {
+
+echo "<div class='alert alert-danger'>No result found</div>";
+ 
+
+}
+
+?>
+
+
+
+
+
+</form>
+
+</div>
+
+</div>
+ 
+
+
+<div class="row">
+
+<div class="col-md-2"></div>
+
+<div class="col-md-8">
+
+<style> table, th, td {
+border: 1px solid black; border-collapse: collapse;
+}
+
+</style>
+
+<table style="width:100%">
+
+<tr>
+
+<th>Goods Type</th>
+
+<th>Quality</th>
+
+<th>Price per Quental</th>
+
+
+</tr>
+
+<?php foreach ($latest as $eachQus) { ?>
+
+
+<tr>
+
+<td><?php echo $eachQus['goods'] ?></td>
+
+<td><?php echo $eachQus['quality'] ?></td>
+
+<td><?php echo $eachQus['price'] ?></td>
+
+</tr>
+
+<?php } ?>
+ 
+
+
+
+
+
+
+</table>
+
+</div></div>
+
+</body>
+
+</html>
+ 
+
+
+<!-- Show Goods Buyer Page Coding -->
+
+<?php session_start();
+// echo "<pre>";
+
+// print_r($_SESSION);
+
+
+
+
+include_once "goods_cls_buyer.php";
+
+$goods_obj = new goods_cls(); if (isset($_GET['keyword'])) {
+$latest = $goods_obj->getGoodsByKeyword($_GET['keyword']);
+
+} else {
+
+$latest = $goods_obj->getGoodsByKeyword();
+
+}
+
+
+
+
+
+
+include_once "header.php";
+
+?>
+
+
+<style> table, th, td {
+border: 1px solid black; border-collapse: collapse;
+ 
+
+
+}
+
+</style>
+
+<style type="text/css"> html,
+body { height: 100%;
+}
+
+body {
+
+background-image: url(marketplace.jpg); background-repeat: no-repeat; background-size: 100% 100%;
+}
+
+</style>
+
+
+
+
+<div class="container-fluid">
+
+<h1> Welcome to Marketplace</h1>
+
+<div class="row goods_form">
+
+<div class="col-md-2"></div>
+
+<div class="col-md-8">
+
+<form action="show_goods_buyer.php">
+
+<div class="input-group">
+
+<input type="text" class="form-control" name="keyword" placeholder="Search for...">
+
+<span class="input-group-btn">
+ 
+
+
+<button class="btnbtn-default" type="submit">
+
+<span class="glyphiconglyphicon-search"></span>
+
+</button>
+
+</span>
+
+</div>
+
+<?php
+
+if (count($latest) == 0) {
+
+echo "<div class='alert alert-danger'>No result found</div>";
+
+}
+
+?>
+
+</form>
+
+</div>
+
+</div>
+
+
+
+
+
+<div class="row">
+
+<div class="col-md-2"></div>
+
+<div class="col-md-8">
+
+
+<table style="width:100%">
+
+<tr>
+
+<th>Goods Type</th>
+
+<th>Quality</th>
+
+<th>Price per Quental</th>
+ 
+
+
+<th>Seller Name</th>
+
+<th>Contact Number</th>
+
+
+</tr>
+
+<?php foreach ($latest as $row) { ?>
+
+
+<tr>
+
+<td><?php echo $row['goods'] ?></td>
+
+<td><?php echo $row['quality'] ?></td>
+
+<td><?php echo $row['price'] ?></td>
+
+<td><?php echo $row['name'] ?></td>
+
+<td><?php echo $row['mobile'] ?></td>
+
+</tr>
+
+<?php } ?>
+
+
+
+
+</table>
+
+</div></div>
+
+</body>
+
+</html>
+ 
+
+
+User _Cls Page Coding
+
+<?php
+
+include_once "conn_cls.php"; class user_cls extends conn_cls{
+public function insert($formData){
+
+$name = $formData['name'];
+
+$username = $formData['username'];
+
+$password = $formData['password'];
+
+$mobile = $formData['mobile'];
+
+$email = $formData['email'];
+
+
+$sql = "insert into users (name, uname, password, mobile, email) values ('$name','$username','$password', '$mobile', '$email')";
+return $this->db->query($sql);
+
+}
+
+
+public function is_username_exists($uname){
+
+
+
+$res = $this->db->query("select * from users where uname='$uname'"); return $res->num_rows;
+}
+
+
+
+public function is_user_exists($uname, $password){
+
+$res = $this->db->query("select * from users where uname='$uname' and password='$password'");
+ 
+
+
+if($res->num_rows)
+
+return mysqli_fetch_assoc($res); else
+return array();
+
+}
+
+
+
+
+
+}
+ 
+
+
+User_Reg page coding
+
+
+<?php session_start();
+if(isset($_SESSION['isLoggedIn'])){ header("location:index.php?alreadyLogin=1");
+}
+
+include_once "header.php"; ?>
+
+
+<div class="container-fluid">
+
+<div class="row ques_form">
+
+<div class="col-md-4"></div>
+
+<div class="col-md-4">
+
+<form action="save_user.php" method="POST" onsubmit="return confirm('are you sure?')" onreset="return confirm('are you sure?')">
+<div class="signup">
+
+<div class="form-group">
+
+<label for="name">Name</label>
+
+<input type="text" id="name" name="name" class="form-control" placeholder="Enter your Full Name e.g Neha Kumari" required="">
+</div>
+
+<div class="form-group">
+
+<label for="username">Username</label>
+
+<input type="text" id="username" name="username" placeholder="allowed value a-zA-Z0-9 without space" class="form-control" required="">
+ 
+
+
+</div>
+
+<div class="form-group">
+
+<label for="password">Password</label>
+
+<input type="password" id="password" placeholder="must be strong" name="password" class="form-control" required="">
+</div>
+
+<div class="form-group">
+
+<label for="mobile">Mobile</label>
+
+<input type="text" id="mobile" name="mobile" placeholder="10 digit mobile number" class="form-control" required="">
+</div>
+
+<div class="form-group">
+
+<label for="email">Email Id</label>
+
+<input type="text" id="email" name="email" placeholder="email id" class="form-control" required="">
+</div>
+
+
+<div class="form-group">
+
+<button type="submit" class="btnbtn-success">Register</button>
+
+<button type="reset" class="btnbtn-danger">Reset</button>
+
+</div>
+
+
+<?php if(isset($_GET['err'])){
+
+
+$msg_cls = "danger";
+ 
+
+
+$msg = "Error while inserting";
+
+
+switch ($_GET['err']) { case 0:
+ 
+
+
+
+
+
+case 2:
+
+
+
+
+}
+ 
+$msg_cls = "success";
+
+$msg = "User Registered Successfully!"; break;
+
+$msg = "User already exists"; break;
+ 
+
+
+
+echo "<div class='alert alert-$msg_cls'>$msg</div>";
+
+?>
+
+
+
+
+<?php } ?>
+
+
+</div>
+
+</form>
+
+</div>
+
+<div class="col-md-4"></div>
+
+</div>
+
+</div>
+ 
+
+
+About Page Coding
+
+
+<?php session_start();
+
+
+
+include_once "header.php";
+
+
+?>
+
+
+
+
+<style type="text/css"> html,
+body { height: 100%;
+}
+
+
+body {
+
+background-image: url(efarming.jpg); background-repeat: no-repeat; background-size: 100% 100%;
+}
+
+</style>
+ 
+
+
+
+
+<h1> E FARMING </h1>
+
+
+<p>E-Farming is a web application developed for farmers. This application gives support to the village farmers who want to use this facility and who want to learn how it is possible and how they can use e-farming to sell their products. If the farmers have knowledge of computer, then they can directly register in the website and sell their products otherwise they can contact company’s computer professional who will schedule classes to teach the basics of computers and internet. They can know how they can open this site and register with it and sell their products online etc.
+E-Farming is a project developed to build a website which will help farmers from to sell their products to different cities online.
+</p>
+ 
+
+
+Add Goods page Coding
+
+<?php session_start();
+
+if(!isset($_SESSION['isLoggedIn'])){ header("location:login.php");
+}
+
+
+include_once "goods_cls.php";
+
+$qus_obj = new goods_cls(); if(isset($_POST['add_goods'])){
+$qus_obj->insertGoods($_POST);
+
+}
+
+include_once "header.php";
+
+?>
+
+
+<div class="container-fluid">
+
+<form action="#" method="POST">
+
+<div class="form-group">
+
+<label>Goods</label>
+
+<input type="text" name="type" placeholder="Please enter Goods name" class="form-control">
+</div>
+
+<div class="form-group">
+
+<label>Quality</label>
+ 
+
+
+<textarea name="quality" placeholder="Please enter Quality. eg. Good, Bad, Excellent" class="form-control"></textarea>
+</div>
+
+<div class="form-group">
+
+<label>Price</label>
+
+<textarea name="price" placeholder="Price per Quental" class="form- control"></textarea>
+</div>
+
+<div class="form-group">
+
+<input type="submit" name="add_goods" class="btnbtn-primary">
+
+
+</div>
+
+</form>
+
+</div>
+
+</body>
+
+</html>
